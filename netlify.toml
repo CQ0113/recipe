@@ -1,0 +1,25 @@
+[build]
+  command = "bash tool/netlify_build.sh"
+  publish = "build/web"
+
+[[plugins]]
+  package = "netlify-plugin-flutter"
+
+  [plugins.inputs]
+    channel = "stable"
+
+# Flutter web is a single-page application. Serve index.html for application
+# routes while allowing existing static files to resolve normally.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

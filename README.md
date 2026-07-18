@@ -71,6 +71,22 @@ flutter build web --release --dart-define-from-file=.env
 
 For GitHub Actions, configure matching repository secrets for every Firebase variable in `.env.example`. `RECAPTCHA_SITE_KEY` may remain empty until App Check is enabled. Firebase client configuration is visible in compiled mobile/web clients by design; service-account JSON, signing passwords, and other administrator credentials must never be placed in Dart code or committed.
 
+## Netlify deployment
+
+Connect the GitHub repository to Netlify with `main` as the production branch. The checked-in `netlify.toml` installs Flutter, runs `tool/netlify_build.sh`, publishes `build/web`, and configures the SPA route fallback.
+
+Add these variables under **Netlify → Project configuration → Environment variables** with the Builds scope:
+
+- `FIREBASE_API_KEY`
+- `FIREBASE_WEB_APP_ID`
+- `FIREBASE_MESSAGING_SENDER_ID`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_AUTH_DOMAIN`
+- `FIREBASE_STORAGE_BUCKET`
+- `RECAPTCHA_SITE_KEY` (optional until App Check is enforced)
+
+Trigger a production deploy after saving the values. Do not upload the local `.env` file or place its values in `netlify.toml`.
+
 ## Security model
 
 - Users can read public recipes and their own private recipes.
