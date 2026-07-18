@@ -35,6 +35,13 @@ migrate_working_dir/
 **/node_modules/
 .firebase/
 
+# Local environment and credential files. Commit only the safe template.
+.env
+.env.*
+!.env.example
+*service-account*.json
+*service_account*.json
+
 # Symbolication related
 app.*.symbols
 

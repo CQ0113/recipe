@@ -53,18 +53,23 @@ Use `--verify-only` to validate the live documents, step arrays, and image endpo
 
 ## Development
 
+Copy `.env.example` to `.env`, then fill in the Firebase client configuration for the target environment. The local `.env` is ignored by Git and is supplied to Flutter at compile time; it is never bundled as a Flutter asset.
+
 ```powershell
+Copy-Item .env.example .env
 flutter pub get
 flutter analyze
 flutter test
-flutter run -d chrome
+flutter run -d chrome --dart-define-from-file=.env
 ```
 
 To validate a release web build:
 
 ```powershell
-flutter build web --release
+flutter build web --release --dart-define-from-file=.env
 ```
+
+For GitHub Actions, configure matching repository secrets for every Firebase variable in `.env.example`. `RECAPTCHA_SITE_KEY` may remain empty until App Check is enabled. Firebase client configuration is visible in compiled mobile/web clients by design; service-account JSON, signing passwords, and other administrator credentials must never be placed in Dart code or committed.
 
 ## Security model
 
