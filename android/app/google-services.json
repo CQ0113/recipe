@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "746916038409",
+    "project_id": "recipe-f6d5b",
+    "storage_bucket": "recipe-f6d5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746916038409:android:12112a093c862049abb5d8",
+        "android_client_info": {
+          "package_name": "com.savora.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "746916038409-konigmdoeufi5d8qj5rdtranmlhl0eki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.savora.app",
+            "certificate_hash": "f01143fa2ef92a3d340c6bf989881795b24c6404"
+          }
+        },
+        {
+          "client_id": "746916038409-f0c97apdrstv535m3622t85ddrquksu8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAygyv-G7iVb-KRnnKRKp-l0BwCII_MoqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "746916038409-f0c97apdrstv535m3622t85ddrquksu8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

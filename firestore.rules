@@ -1,0 +1,89 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsRecipe(data) {
+      return signedIn() && data.authorId == request.auth.uid;
+    }
+
+    function validRecipe(data) {
+      return data.keys().hasAll([
+          'title', 'description', 'category', 'cuisine', 'difficulty',
+          'prepMinutes', 'cookMinutes', 'servings', 'imageUrl',
+          'ingredients', 'steps', 'authorId', 'authorName', 'visibility',
+          'isVegetarian', 'featured', 'tags', 'allergens',
+          'ratingAverage', 'ratingCount', 'createdAt', 'updatedAt'
+        ])
+        && data.title is string
+        && data.title.size() >= 3
+        && data.title.size() <= 120
+        && data.description is string
+        && data.description.size() >= 20
+        && data.description.size() <= 2000
+        && data.prepMinutes is int
+        && data.prepMinutes >= 0
+        && data.prepMinutes <= 1440
+        && data.cookMinutes is int
+        && data.cookMinutes >= 0
+        && data.cookMinutes <= 1440
+        && data.servings is int
+        && data.servings >= 1
+        && data.servings <= 24
+        && data.imageUrl is string
+        && data.imageUrl.size() <= 2048
+        && data.ingredients is list
+        && data.ingredients.size() >= 1
+        && data.ingredients.size() <= 50
+        && data.steps is list
+        && data.steps.size() >= 1
+        && data.steps.size() <= 30
+        && data.tags is list
+        && data.tags.size() <= 8
+        && data.allergens is list
+        && data.allergens.size() <= 20
+        && data.visibility in ['public', 'private'];
+    }
+
+    match /recipes/{recipeId} {
+      allow read: if signedIn()
+        && (resource.data.visibility == 'public' || ownsRecipe(resource.data));
+
+      allow create: if ownsRecipe(request.resource.data)
+        && validRecipe(request.resource.data)
+        && request.resource.data.featured == false
+        && request.resource.data.ratingAverage == 0
+        && request.resource.data.ratingCount == 0;
+
+      allow update: if ownsRecipe(resource.data)
+        && ownsRecipe(request.resource.data)
+        && validRecipe(request.resource.data)
+        && request.resource.data.authorId == resource.data.authorId
+        && request.resource.data.featured == resource.data.featured
+        && request.resource.data.ratingAverage == resource.data.ratingAverage
+        && request.resource.data.ratingCount == resource.data.ratingCount
+        && request.resource.data.createdAt == resource.data.createdAt;
+
+      allow delete: if ownsRecipe(resource.data);
+    }
+
+    match /users/{userId} {
+      allow read, create, update, delete: if signedIn() && request.auth.uid == userId;
+
+      match /favorites/{recipeId} {
+        allow read, create, update, delete: if signedIn() && request.auth.uid == userId;
+      }
+
+      match /shoppingItems/{itemId} {
+        allow read, create, update, delete: if signedIn() && request.auth.uid == userId;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
