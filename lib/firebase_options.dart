@@ -13,6 +13,9 @@ class DefaultFirebaseOptions {
   static const _webAppId = String.fromEnvironment(
     'FIREBASE_WEB_APP_ID',
   );
+  static const _iosAppId = String.fromEnvironment(
+    'FIREBASE_IOS_APP_ID',
+  );
   static const _messagingSenderId = String.fromEnvironment(
     'FIREBASE_MESSAGING_SENDER_ID',
   );
@@ -32,8 +35,19 @@ class DefaultFirebaseOptions {
   static const _iosBundleId = String.fromEnvironment('FIREBASE_IOS_BUNDLE_ID');
 
   static FirebaseOptions get currentPlatform {
-    final appId = defaultTargetPlatform == TargetPlatform.android
+    // On the web, defaultTargetPlatform follows the browser user agent. An
+    // Android phone therefore reports TargetPlatform.android even though
+    // Firebase must still receive the web app ID.
+    final nativeAndroid =
+        !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+    final nativeApple =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.macOS);
+    final appId = nativeAndroid
         ? _androidAppId
+        : nativeApple && _iosAppId.isNotEmpty
+        ? _iosAppId
         : _webAppId;
 
     if (_apiKey.isEmpty ||
@@ -50,9 +64,9 @@ class DefaultFirebaseOptions {
       projectId: _projectId,
       authDomain: kIsWeb ? _optional(_authDomain) : null,
       storageBucket: _optional(_storageBucket),
-      androidClientId: _optional(_androidClientId),
-      iosClientId: _optional(_iosClientId),
-      iosBundleId: _optional(_iosBundleId),
+      androidClientId: nativeAndroid ? _optional(_androidClientId) : null,
+      iosClientId: nativeApple ? _optional(_iosClientId) : null,
+      iosBundleId: nativeApple ? _optional(_iosBundleId) : null,
     );
   }
 
